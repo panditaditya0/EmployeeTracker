@@ -1,4 +1,5 @@
 name: Test, Upload artifact
+
 on: workflow_dispatch
 
 jobs:
@@ -17,7 +18,7 @@ jobs:
           echo "rev  ${rev}"
           ls
           mvn clean package -DskipTests
-          sudo docker build --build-arg GIT_COMMIT=${rev} -t pslheartbeat/t:latest -f Dockerfile .
-          sudo docker image tag pslheartbeat/t nexus.ppustage.dev/pslheartbeat-service:${rev}
+          sudo docker build --build-arg GIT_COMMIT=${rev} -t psluserheartbeat/t:latest -f Dockerfile .
+          sudo docker image tag psluserheartbeat/t nexus.ppustage.dev/psluserheartbeats-service:${rev}
           sudo docker login -u docker-psl -p 1q2w3e nexus.ppustage.dev
-          sudo docker push nexus.ppustage.dev/pslheartbeat-service:${rev}
+          sudo docker push nexus.ppustage.dev/psluserheartbeat-service:${rev}

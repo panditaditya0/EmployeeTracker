@@ -1,5 +1,6 @@
 package com.ppus.psl_user_heartbeat.service;
 
+import com.ppus.psl_user_heartbeat.model.HearBeatModel;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -9,30 +10,31 @@ import java.util.stream.Collectors;
 
 @Service
 public class HeartbeatService {
-    private final Map<String, Long> userHeartbeatMap = new ConcurrentHashMap<>();
+    private final Map<String, HearBeatModel> userHeartbeatMap = new ConcurrentHashMap<>();
     private static final long ACTIVE_THRESHOLD = 60 * 1000;
 
-    public void recordHeartbeat(String userId) {
-        userHeartbeatMap.put(userId, System.currentTimeMillis());
+    public void recordHeartbeat(HearBeatModel model) {
+        model.timestamp = System.currentTimeMillis();
+        userHeartbeatMap.put(model.userId,model);
     }
 
     public int getActiveUserCount() {
         long currentTime = System.currentTimeMillis();
         return (int) userHeartbeatMap.values().stream()
-                .filter(timestamp -> (currentTime - timestamp) <= ACTIVE_THRESHOLD)
+                .filter(m -> (currentTime - m.timestamp) <= ACTIVE_THRESHOLD)
                 .count();
     }
 
-    public List<String> getActiveUserIds() {
+    public List<HearBeatModel> getActiveUserIds() {
         long currentTime = System.currentTimeMillis();
         return userHeartbeatMap.entrySet().stream()
-                .filter(entry -> (currentTime - entry.getValue()) <= ACTIVE_THRESHOLD)
-                .map(Map.Entry::getKey)
+                .filter(m -> (currentTime - m.getValue().timestamp) <= ACTIVE_THRESHOLD)
+                .map(Map.Entry::getValue)
                 .collect(Collectors.toList());
     }
 
     public void cleanupInactiveUsers() {
         long currentTime = System.currentTimeMillis();
-        userHeartbeatMap.entrySet().removeIf(entry -> (currentTime - entry.getValue()) > ACTIVE_THRESHOLD);
+        userHeartbeatMap.entrySet().removeIf(entry -> (currentTime - entry.getValue().timestamp) > ACTIVE_THRESHOLD);
     }
 }

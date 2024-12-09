@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 @Service
 public class HeartbeatService {
     private final Map<String, HearBeatModel> userHeartbeatMap = new ConcurrentHashMap<>();
-    private static final long ACTIVE_THRESHOLD = 60 * 1000;
+    private static final long ACTIVE_THRESHOLD = 60 * 1000 * 4;
 
     public void recordHeartbeat(HearBeatModel model) {
         model.timestamp = System.currentTimeMillis();

@@ -20,6 +20,9 @@ public class HeartbeatController {
     @PostMapping
     @CrossOrigin
     public ResponseEntity<Void> recordHeartbeat(@RequestParam String userId, @RequestParam String currUrl) {
+        if (userId == null || userId.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
         HearBeatModel m = new HearBeatModel();
         m.link = currUrl;
         m.userId = userId;

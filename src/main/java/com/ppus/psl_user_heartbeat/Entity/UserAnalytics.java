@@ -31,4 +31,6 @@ public class UserAnalytics {
     private String link;
     @Column(name = "action")
     private String action;
+    @Column(name = "first_ping")
+    private LocalDateTime firstPing;
 }

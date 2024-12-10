@@ -22,16 +22,22 @@ public class HeartbeatService {
     private UserAnalyticsRepo userAnalyticsRepo;
 
     public void recordHeartbeat(HearBeatModel model) {
+        ZoneId istZoneId = ZoneId.of("Asia/Kolkata");
+
         model.link = model.link.split("key")[0];
         model.timestamp = System.currentTimeMillis();
+        LocalDateTime now = LocalDateTime.now(istZoneId);
+
         if (!userHeartbeatMap.containsKey(model.userId)) {
             UserAnalytics userAnalytics = new UserAnalytics();
-            LocalDateTime now = LocalDateTime.now();
             userAnalytics.setUserId(model.userId);
             userAnalytics.setDateTime(now);
             userAnalytics.setLink(model.link);
             userAnalytics.setAction("Added");
+            userAnalytics.setFirstPing(now);
             userAnalyticsRepo.save(userAnalytics);
+        } else{
+            userAnalyticsRepo.saveTime(now, model.userId);
         }
         userHeartbeatMap.put(model.userId, model);
     }
@@ -53,8 +59,9 @@ public class HeartbeatService {
 
     public void cleanupInactiveUsers() {
         long currentTime = System.currentTimeMillis();
+        ZoneId istZoneId = ZoneId.of("Asia/Kolkata");
         LocalDateTime localDateTime = Instant.ofEpochMilli(currentTime)
-                .atZone(ZoneId.systemDefault())
+                .atZone(istZoneId)
                 .toLocalDateTime();
         List<String> listOfInActiveUserIDs = this.getInactiveUsers(currentTime);
         List<UserAnalytics> listOfInActiveUserObjs = new ArrayList<>();

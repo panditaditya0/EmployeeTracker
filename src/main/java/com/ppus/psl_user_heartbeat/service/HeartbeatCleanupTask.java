@@ -11,7 +11,7 @@ public class HeartbeatCleanupTask {
         this.heartbeatService = heartbeatService;
     }
 
-    @Scheduled(fixedRate = 5 * 60 * 1000) // Every 5 minutes
+    @Scheduled(fixedRate = 1 * 60 * 1000)
     public void cleanUpInactiveUsers() {
         heartbeatService.cleanupInactiveUsers();
     }

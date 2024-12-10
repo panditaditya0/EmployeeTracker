@@ -22,6 +22,7 @@ public class HeartbeatService {
     private UserAnalyticsRepo userAnalyticsRepo;
 
     public void recordHeartbeat(HearBeatModel model) {
+        model.link = model.link.split("key")[0];
         model.timestamp = System.currentTimeMillis();
         if (!userHeartbeatMap.containsKey(model.userId)) {
             UserAnalytics userAnalytics = new UserAnalytics();

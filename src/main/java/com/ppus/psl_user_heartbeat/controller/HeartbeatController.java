@@ -1,5 +1,6 @@
 package com.ppus.psl_user_heartbeat.controller;
 
+import com.ppus.psl_user_heartbeat.Config.WebSocketEventListener;
 import com.ppus.psl_user_heartbeat.model.HearBeatModel;
 import com.ppus.psl_user_heartbeat.model.UsersResponse;
 import com.ppus.psl_user_heartbeat.service.HeartbeatService;
@@ -16,11 +17,14 @@ public class HeartbeatController {
     private final HeartbeatService heartbeatService;
     private final WsHeartBeatService wsHeartBeatService;
     private SimpMessagingTemplate messagingTemplate;
+    private final WebSocketEventListener webSocketEventListener;
 
-    public HeartbeatController(HeartbeatService heartbeatService, WsHeartBeatService wsHeartBeatService, SimpMessagingTemplate messagingTemplate) {
+
+    public HeartbeatController(HeartbeatService heartbeatService, WsHeartBeatService wsHeartBeatService, SimpMessagingTemplate messagingTemplate, WebSocketEventListener webSocketEventListener) {
         this.heartbeatService = heartbeatService;
         this.wsHeartBeatService = wsHeartBeatService;
         this.messagingTemplate = messagingTemplate;
+        this.webSocketEventListener = webSocketEventListener;
     }
 
     @PostMapping
@@ -63,5 +67,9 @@ public class HeartbeatController {
     public ResponseEntity<Integer> getActiveUserCount() {
         int activeUserCount = heartbeatService.getActiveUserCount();
         return ResponseEntity.ok(activeUserCount);
+    }
+    @GetMapping("/active-ws-connections")
+    public int getActiveConnections() {
+        return webSocketEventListener.getActiveConnections();
     }
 }

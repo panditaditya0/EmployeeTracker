@@ -3,7 +3,9 @@ package com.ppus.psl_user_heartbeat.controller;
 import com.ppus.psl_user_heartbeat.model.HearBeatModel;
 import com.ppus.psl_user_heartbeat.model.UsersResponse;
 import com.ppus.psl_user_heartbeat.service.HeartbeatService;
+import com.ppus.psl_user_heartbeat.service.WsHeartBeatService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,9 +14,13 @@ import java.util.List;
 @RequestMapping("/api/heartbeat")
 public class HeartbeatController {
     private final HeartbeatService heartbeatService;
+    private final WsHeartBeatService wsHeartBeatService;
+    private SimpMessagingTemplate messagingTemplate;
 
-    public HeartbeatController(HeartbeatService heartbeatService) {
+    public HeartbeatController(HeartbeatService heartbeatService, WsHeartBeatService wsHeartBeatService, SimpMessagingTemplate messagingTemplate) {
         this.heartbeatService = heartbeatService;
+        this.wsHeartBeatService = wsHeartBeatService;
+        this.messagingTemplate = messagingTemplate;
     }
 
     @PostMapping
@@ -30,14 +36,28 @@ public class HeartbeatController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/active-users")
-    public ResponseEntity<UsersResponse> getActiveUserIds() {
+    @GetMapping("/active-users/{senMsg}")
+    public ResponseEntity<UsersResponse> getActiveUserIds(@PathVariable String senMsg) {
         List<HearBeatModel> activeUserIds = heartbeatService.getActiveUserIds();
+        UsersResponse usersResponse = new UsersResponse();
+        usersResponse.count = activeUserIds.stream().count();
+        usersResponse.activeUsers = activeUserIds;
+        if (Boolean.valueOf(senMsg) == Boolean.TRUE){
+            messagingTemplate.convertAndSend("/topic/productPage",usersResponse.count.toString() );
+
+        }
+        return ResponseEntity.ok(usersResponse);
+    }
+
+    @GetMapping("/ws-active-users")
+    public ResponseEntity<UsersResponse> getWsActiveUserIds() {
+        List<HearBeatModel> activeUserIds = wsHeartBeatService.getActiveUserIds();
         UsersResponse usersResponse = new UsersResponse();
         usersResponse.count = activeUserIds.stream().count();
         usersResponse.activeUsers = activeUserIds;
         return ResponseEntity.ok(usersResponse);
     }
+
 
     @GetMapping("/active-user-count")
     public ResponseEntity<Integer> getActiveUserCount() {

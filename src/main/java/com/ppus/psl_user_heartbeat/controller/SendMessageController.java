@@ -15,16 +15,16 @@ public class SendMessageController {
     }
 
     // complete url =  /app/sendMessage
-    @MessageMapping("/sendMessage")
-//    @SendTo("/topic/productPage")
-    public String sendMessage(HearBeatModel  message){
-        try{
-            if(null == message.userId || null == message.link)
-                return "something null";
-            wsHeartBeatService.wsRecordHeartbeat(message);
-            return "Got ping "+ message.userId;
-        } catch (Exception ex){
-            return "Error " + ex.getMessage();
-        }
-    }
+//    @MessageMapping("/sendMessage")
+////    @SendTo("/topic/productPage")
+//    public String sendMessage(HearBeatModel  message){
+//        try{
+//            if(null == message.userId || null == message.link)
+//                return "something null";
+//            wsHeartBeatService.wsRecordHeartbeat(message);
+//            return "Got ping "+ message.userId;
+//        } catch (Exception ex){
+//            return "Error " + ex.getMessage();
+//        }
+//    }
 }

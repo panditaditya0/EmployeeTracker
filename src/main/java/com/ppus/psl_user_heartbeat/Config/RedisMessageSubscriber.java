@@ -21,6 +21,6 @@ public class RedisMessageSubscriber implements MessageListener {
     @Override
     public void onMessage(Message message, byte[] pattern) {
         System.out.println("Got message: " + new String(message.getBody()));
-        messagingTemplate.convertAndSend(webSocketTopic,message.toString());
+        messagingTemplate.convertAndSend("/topic/productPage",message.toString());
     }
 }

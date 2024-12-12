@@ -12,7 +12,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     @CrossOrigin
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws").setAllowedOriginPatterns("http://127.0.0.1:5500/", "http://dev.perniaspopupshop.com", "http://stage.perniaspopupshop.com", "https://dimension-six.perniaspopupshop.com").withSockJS();
+        registry.addEndpoint("/ws").setAllowedOriginPatterns("http://127.0.0.1:5500/", "http://dev.perniaspopupshop.com", "https://stage.perniaspopupshop.com", "https://dimension-six.perniaspopupshop.com").withSockJS();
     }
 
     @Override
